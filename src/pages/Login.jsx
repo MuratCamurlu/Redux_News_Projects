@@ -15,6 +15,7 @@ export default function Login() {
   const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
+    dispatch(setUser());
     setEmail("");
     setPassword("");
     navigate(-1);
