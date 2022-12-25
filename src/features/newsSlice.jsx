@@ -7,15 +7,20 @@ const initialState = {
   error: false,
 };
 
-export const getNews = createAsyncThunk("getNews", async () => {
-  const API_KEY = "242fb770517b456dac640c348e0fed1c";
-  const url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`;
-  try {
-    const { data } = await axios(url);
-  } catch (error) {
-    console.log(error);
+export const getNews = createAsyncThunk(
+  "getNews",
+  async (thunkAPI, { rejectWithValue }) => {
+    const API_KEY = "242fb770517b456dac640c348e0fed1c";
+    const url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`;
+    try {
+      const { data } = await axios(url);
+      return data.articles;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue("Something went wrong");
+    }
   }
-});
+);
 
 const newsSlice = createSlice({
   name: "news",
@@ -37,7 +42,7 @@ const newsSlice = createSlice({
         state.newsList = payload;
         state.loading = false;
       })
-      .addCase(getNews.rejected, (state) => {
+      .addCase(getNews.rejected, (state, { payload }) => {
         state.error = true;
         state.loading = false;
       });
